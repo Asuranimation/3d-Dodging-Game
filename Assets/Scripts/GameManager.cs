@@ -10,28 +10,37 @@ public class GameManager : MonoBehaviour
 
     public Transform spawnPoint;
 
+
     [SerializeField] float cooldown;
 
+    [SerializeField] int poolsize = 20;
+    [SerializeField] List<GameObject> objectPool =  new List<GameObject>();
+
+
+    private void Awake()
+    {
+        for (int i = 0; i < poolsize; i++)
+        {
+            GameObject stonePrefabs = Instantiate(stone,transform.position,Quaternion.identity);
+            stonePrefabs.SetActive(false);
+            objectPool.Add(stonePrefabs);
+        }
+    }
 
     void Start()
     {
             StartCoroutine(SpawnStoneCourotine());
     }
 
-
-    void Update()
-    {
-        
-    }
-
     IEnumerator SpawnStoneCourotine()
     {
-
         Vector3 spawnPos = spawnPoint.position;
 
         spawnPos.x = Random.Range(-maxX, maxX);
 
-        Instantiate(stone, spawnPos, Quaternion.identity);
+        GameObject stonePrefabs = GetObjectPool();
+        stonePrefabs.transform.position = spawnPos;
+        stonePrefabs.SetActive(true);
 
         yield return new WaitForSeconds(cooldown);
 
@@ -41,6 +50,17 @@ public class GameManager : MonoBehaviour
         {
             cooldown -= 0.01f;
         }
-
+    }
+     
+    GameObject GetObjectPool()
+    {
+        for(int i = 0; i < objectPool.Count; i++)
+        {
+            if (!objectPool[i].activeInHierarchy) 
+            {
+                return objectPool[i];
+            }
+        }
+        return null;
     }
 }
