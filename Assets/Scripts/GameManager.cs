@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -16,6 +17,23 @@ public class GameManager : MonoBehaviour
     [SerializeField] int poolsize = 20;
     [SerializeField] List<GameObject> objectPool =  new List<GameObject>();
 
+    [SerializeField] TriggerScorring trigger;
+
+    [SerializeField] TextMeshProUGUI currentScoreText;
+    [SerializeField] TextMeshProUGUI highScoreText;
+    [SerializeField] int currentScore;
+    [SerializeField] int highScore;
+
+
+    private void OnEnable()
+    {
+        trigger.onTriggerScorring += IncreaseCurrentScore;
+    }
+
+    private void OnDisable()
+    {
+        trigger.onTriggerScorring -= IncreaseCurrentScore;
+    }
 
     private void Awake()
     {
@@ -29,7 +47,10 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-            StartCoroutine(SpawnStoneCourotine());
+        StartCoroutine(SpawnStoneCourotine());
+        currentScoreText.text = currentScore.ToString();
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
+        highScoreText.text = highScore.ToString();
     }
 
     IEnumerator SpawnStoneCourotine()
@@ -63,4 +84,18 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
+
+    void IncreaseCurrentScore()
+    {
+        currentScore += 10;
+        currentScoreText.text = currentScore.ToString();
+
+        if(currentScore > highScore)
+        {
+            highScore = currentScore;
+            PlayerPrefs.SetInt("HighScore", highScore);
+            PlayerPrefs.Save();
+        }
+    }
+
 }

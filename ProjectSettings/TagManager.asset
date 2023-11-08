@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Stone
   - LoseCollider
+  - Scoring
   layers:
   - Default
   - TransparentFX
